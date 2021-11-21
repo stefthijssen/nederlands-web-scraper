@@ -3,7 +3,7 @@ import inspect
 import re
 import w3lib.html
 
-START_URL = "https://dmoz-odp.org/World/Dansk/"
+START_URL = "https://dmoz-odp.org/World/Italiano/"
 SPIDER_NAME = "dataSpider"
 DOCUMENT_HREF_SELECTOR = "section.sites div.title-and-desc a::attr(href)"
 SAMPLES = 5
