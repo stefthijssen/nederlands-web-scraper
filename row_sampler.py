@@ -4,7 +4,6 @@ def sample_rows(file, amount):
     with open(file) as jf:
         data = json.load(jf)
         nf = open("sample_output.txt", "w")
-        nf.write('begin')
         for idx, element in enumerate(random.sample(data, amount)):
             nf.write(f"{idx+1}: {element['siteUrl']}\n")
         nf.close()
