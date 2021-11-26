@@ -3,7 +3,7 @@ import sys, json, random
 def sample_rows(file, amount):
     with open(file) as jf:
         data = json.load(jf)
-        nf = open("sample_output.txt", "w")
+        nf = open(f"{file.split('.')[0]}_sample_output.txt", "w")
         for idx, element in enumerate(random.sample(data, amount)):
             nf.write(f"{idx+1}: {element['siteUrl']}\n")
         nf.close()
