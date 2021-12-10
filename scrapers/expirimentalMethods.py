@@ -33,9 +33,7 @@ def getSubDirectories(url):
 
 def fA(url):
     topLevelDomain = getTopLevelDomain(url).lower()
-    if (topLevelDomain == 'nl'):
-        return True
-    if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
+    if (topLevelDomain == 'nl' or topLevelDomain == 'sr'):
         return True
     if (topLevelDomain in countryCodes):
         return False
@@ -99,7 +97,3 @@ def fE(url):
         return True
     else:
         return verifyOrigin(url)
-
-print(fC("https://www.news.yahoo.com/test"))
-print(fC("https://www.news.yahoo.nl/test"))
-print(fC("https://www.koelkast.be/"))
