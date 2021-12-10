@@ -3,6 +3,10 @@ import pycountry
 
 countryCodes = list(map(lambda x: x.alpha_2.lower(), list(pycountry.countries)))
 
+def verifyOrigin(url):
+    # TODO:
+    return False
+
 def isDutch(str):
     code = detect(str)
     getPercentageDutch(str)
@@ -11,8 +15,8 @@ def isDutch(str):
     return 'nl' == code
 
 def getPercentageDutch(str):
-    percentages = detect_langs(str)
-    print(percentages)
+    # TODO:
+    return 0.5
 
 def getDomainName(url):
     parts = url.split("/")[2].replace("www.", "").replace("ww2.", "").replace("ww3.", "").replace("ww4.", "").replace("ww5.", "").split(".")
@@ -61,12 +65,40 @@ def fC(url):
     return isDutch(domainName + " " + subDirectories)
 
 def fD(url):
-    # TODO
-    return
+    topLevelDomain = getTopLevelDomain(url).lower()
+    domainName = getDomainName(url)
+    subDirectories = getSubDirectories(url)
+    if (topLevelDomain == 'nl'):
+        return True
+    if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
+        if isDutch(domainName + " " + subDirectories):
+            return True
+        else:
+            return verifyOrigin(url)
+    if (topLevelDomain in countryCodes):
+        return False
+    if isDutch(domainName + " " + subDirectories):
+        return True
+    else:
+        return verifyOrigin(url)
 
 def fE(url):
-    # TODO
-    return
+    topLevelDomain = getTopLevelDomain(url).lower()
+    domainName = getDomainName(url)
+    subDirectories = getSubDirectories(url)
+    if (topLevelDomain == 'nl'):
+        return True
+    if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
+        if isDutch(domainName + " " + subDirectories):
+            return True
+        else:
+            return verifyOrigin(url)
+    if (topLevelDomain in countryCodes):
+        return False
+    if isDutch(domainName + " " + subDirectories):
+        return True
+    else:
+        return verifyOrigin(url)
 
 print(fC("https://www.news.yahoo.com/test"))
 print(fC("https://www.news.yahoo.nl/test"))
