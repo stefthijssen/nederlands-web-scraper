@@ -3,10 +3,11 @@ import pycountry
 
 countryCodes = list(map(lambda x: x.alpha_2.lower(), list(pycountry.countries)))
 
+# TODO: Use own lib
 def verifyOrigin(url):
-    # TODO:
     return False
 
+# TODO: Use own lib
 def isDutch(str):
     code = detect(str)
     getPercentageDutch(str)
@@ -14,8 +15,8 @@ def isDutch(str):
     print(code)
     return 'nl' == code
 
+# TODO: Use own lib
 def getPercentageDutch(str):
-    # TODO:
     return 0.5
 
 def getDomainName(url):
@@ -40,6 +41,7 @@ def fA(url):
     return False
 
 def fB(url):
+    # TODO: Integrate with trigram model
     topLevelDomain = getTopLevelDomain(url).lower()
     domainName = getDomainName(url)
     if (topLevelDomain == 'nl'):
@@ -51,6 +53,7 @@ def fB(url):
     return isDutch(domainName)
 
 def fC(url):
+    # TODO: Ensure content
     topLevelDomain = getTopLevelDomain(url).lower()
     domainName = getDomainName(url)
     subDirectories = getSubDirectories(url)
@@ -63,24 +66,7 @@ def fC(url):
     return isDutch(domainName + " " + subDirectories)
 
 def fD(url):
-    topLevelDomain = getTopLevelDomain(url).lower()
-    domainName = getDomainName(url)
-    subDirectories = getSubDirectories(url)
-    if (topLevelDomain == 'nl'):
-        return True
-    if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
-        if isDutch(domainName + " " + subDirectories):
-            return True
-        else:
-            return verifyOrigin(url)
-    if (topLevelDomain in countryCodes):
-        return False
-    if isDutch(domainName + " " + subDirectories):
-        return True
-    else:
-        return verifyOrigin(url)
-
-def fE(url):
+    # TODO: Factor in trust
     topLevelDomain = getTopLevelDomain(url).lower()
     domainName = getDomainName(url)
     subDirectories = getSubDirectories(url)
