@@ -1,23 +1,9 @@
-from langdetect import detect, detect_langs
+from langdetect import detect
+from model.dutchDetector import DutchDetector
 import pycountry
 
 countryCodes = list(map(lambda x: x.alpha_2.lower(), list(pycountry.countries)))
-
-# TODO: Use own lib
-def verifyOrigin(url):
-    return False
-
-# TODO: Use own lib
-def isDutch(str):
-    code = detect(str)
-    getPercentageDutch(str)
-    print(str)
-    print(code)
-    return 'nl' == code
-
-# TODO: Use own lib
-def getPercentageDutch(str):
-    return 0.5
+detector = DutchDetector()
 
 def getDomainName(url):
     parts = url.split("/")[2].replace("www.", "").replace("ww2.", "").replace("ww3.", "").replace("ww4.", "").replace("ww5.", "").split(".")
@@ -47,10 +33,10 @@ def fB(url):
     if (topLevelDomain == 'nl'):
         return True
     if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
-        return isDutch(domainName)
+        return detector.isDutch(domainName)
     if (topLevelDomain in countryCodes):
         return False
-    return isDutch(domainName)
+    return detector.isDutch(domainName)
 
 def fC(url):
     # TODO: Ensure content
@@ -60,10 +46,10 @@ def fC(url):
     if (topLevelDomain == 'nl'):
         return True
     if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
-        return isDutch(domainName + " " + subDirectories)
+        return detector.isDutch(domainName + " " + subDirectories)
     if (topLevelDomain in countryCodes):
         return False
-    return isDutch(domainName + " " + subDirectories)
+    return detector.isDutch(domainName + " " + subDirectories)
 
 def fD(url):
     # TODO: Factor in trust
@@ -73,13 +59,13 @@ def fD(url):
     if (topLevelDomain == 'nl'):
         return True
     if (topLevelDomain == 'be' or topLevelDomain == 'sr'):
-        if isDutch(domainName + " " + subDirectories):
+        if detector.isDutch(domainName + " " + subDirectories):
             return True
         else:
             return verifyOrigin(url)
     if (topLevelDomain in countryCodes):
         return False
-    if isDutch(domainName + " " + subDirectories):
+    if detector.isDutch(domainName + " " + subDirectories):
         return True
     else:
         return verifyOrigin(url)

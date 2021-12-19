@@ -1,11 +1,19 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
-from expirimentalMethods import fD
+from model.dutchDetector import DutchDetector
 
 START_URLS = [ "https://www.nu.nl", "https://nl.wikipedia.org" ]
 SPIDER_NAME = "dataSpider"
+TRUST_FACTOR = 0.1 # 0.1 means 10% less likely to be dutch is fine considered dutch aswell.
 
-urlIsDutch = fD
+detector = DutchDetector()
+
+def urlIsDutch(url, trust):
+    percentage = detector.isDutchPercentage(url)
+    if (trust >= 1):
+        return percentage > 0.5 - TRUST_FACTOR
+    else:
+        return percentage > 0.5
 
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
@@ -25,7 +33,7 @@ class DataSpider(scrapy.Spider):
         leftOverLinks = []
 
         for link in links:
-            if urlIsDutch(link.url):
+            if urlIsDutch(link.url, trust):
                 yield scrapy.Request(link.url, priority=trust, callback=lambda x: self.parseLink(x, trust + 1))
             else:
                 leftOverLinks.append(link)

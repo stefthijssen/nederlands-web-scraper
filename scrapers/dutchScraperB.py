@@ -1,11 +1,14 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
-from expirimentalMethods import fB
+from model.dutchDetector import DutchDetector
 
 START_URLS = [ "https://www.nu.nl", "https://nl.wikipedia.org" ]
 SPIDER_NAME = "dataSpider"
 
-urlIsDutch = fB
+detector = DutchDetector()
+
+def urlIsDutch(url):
+    return detector.isDutch(url)
 
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME

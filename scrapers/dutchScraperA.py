@@ -1,16 +1,32 @@
 import scrapy
 from scrapy.linkextractors import LinkExtractor
-from expirimentalMethods import fA, fB, fC, fD, fE
+import re
 
-START_URLS = [ "https://www.nu.nl", "https://nl.wikipedia.org" ]
+START_URLS = [ "https://waarneming.nl", "https://www.nu.nl", "https://nl.wikipedia.org" ]
 SPIDER_NAME = "dataSpider"
 
-urlIsDutch = fA
+def getTopLevelDomain(url):
+    parts = url.split("/")[2].split(".")
+    return parts[len(parts)-1]
+
+def urlIsDutch(url):
+    topLevelDomain = getTopLevelDomain(url).lower()
+    if (topLevelDomain == 'nl' or topLevelDomain == 'sr'):
+        return True
+    return False
+
+def filterMediaQueries(url):
+    res = re.search("(.*?)\?", url)
+    if res:
+        return res[1]
+    else:
+        return url
+
 
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
     start_urls = START_URLS
-    link_extractor = LinkExtractor(restrict_css = "body", unique = True)
+    link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterMediaQueries)
 
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
