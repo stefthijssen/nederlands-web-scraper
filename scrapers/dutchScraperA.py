@@ -1,9 +1,11 @@
 import scrapy
+from scrapy.exceptions import CloseSpider
 from scrapy.linkextractors import LinkExtractor
-import re
+import time, re
 
-START_URLS = [ "https://waarneming.nl", "https://www.nu.nl", "https://nl.wikipedia.org" ]
+START_URLS = [ "https://www.nu.nl", "https://nl.wikipedia.org" ]
 SPIDER_NAME = "dataSpider"
+PERIOD_OF_TIME = 3600
 
 def getTopLevelDomain(url):
     parts = url.split("/")[2].split(".")
@@ -15,6 +17,12 @@ def urlIsDutch(url):
         return True
     return False
 
+def filterTrailingBackslash(url):
+    if (url.endswith('/')):
+        return url[:-1]
+    else:
+        return url
+
 def filterMediaQueries(url):
     res = re.search("(.*?)\?", url)
     if res:
@@ -22,11 +30,13 @@ def filterMediaQueries(url):
     else:
         return url
 
+filterUrl = lambda x: filterTrailingBackslash(filterMediaQueries(x))
+start_time = time.time()
 
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
     start_urls = START_URLS
-    link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterMediaQueries)
+    link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterUrl)
 
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
@@ -34,6 +44,8 @@ class DataSpider(scrapy.Spider):
     }
     
     def parseLink(self, response, trust=1):
+        if (time.time() > start_time + PERIOD_OF_TIME):
+            raise CloseSpider("Time limit reached")
         if (trust >= 1):
             yield { "url": response.url }
 
