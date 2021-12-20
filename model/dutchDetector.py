@@ -5,17 +5,17 @@ import pickle
 
 class DutchDetector:
     def __init__(self) -> None:
-        self.model = tf.keras.models.load_model('recources/nn_trigram')
+        self.model = tf.keras.models.load_model('nn_trigram')
         self.train_min = pd.read_pickle('recources/trainmin.pkl')
         self.train_max = pd.read_pickle('recources/trainmax.pkl')
         file = open("recources/vocabulary.pkl", 'rb')
         vocab = pickle.load(file)
         file.close()
-        vectorizer = CountVectorizer(analyzer='char',
+        self.vectorizer = CountVectorizer(analyzer='char',
                                     ngram_range=(3,3),
                                     vocabulary=vocab)
 
-        self.feature_names = vectorizer.get_feature_names()
+        self.feature_names = self.vectorizer.get_feature_names()
 
     def isDutch(self, url: str) -> bool:
         trigrams = self.vectorizer.fit_transform([url])
