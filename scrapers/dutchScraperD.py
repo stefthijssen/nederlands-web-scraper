@@ -9,15 +9,6 @@ SPIDER_NAME = "dataSpider"
 TRUST_FACTOR = 0.1 # 0.1 means 10% less likely to be dutch is fine considered dutch aswell.
 PERIOD_OF_TIME = 3600
 
-detector = DutchDetector()
-
-def urlIsDutch(url, trust):
-    percentage = detector.isDutchPercentage(url)
-    if (trust >= 1):
-        return percentage > 0.5 - TRUST_FACTOR
-    else:
-        return percentage > 0.5
-
 def filterTrailingBackslash(url):
     if (url.endswith('/')):
         return url[:-1]
@@ -37,12 +28,20 @@ start_time = time.time()
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
     start_urls = START_URLS
-    link_extractor = LinkExtractor(restrict_css = "body", unique = True)
-
+    link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterUrl)
+    detector = DutchDetector()
+    
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
         'DNS_TIMEOUT': 10
     }
+
+    def urlIsDutch(self, url, trust):
+        percentage = self.detector.isDutchPercentage(url)
+        if (trust >= 1):
+            return percentage > 0.5 - TRUST_FACTOR
+        else:
+            return percentage > 0.5
     
     def parseLink(self, response, trust=1):
         if (time.time() > start_time + PERIOD_OF_TIME):
@@ -54,7 +53,7 @@ class DataSpider(scrapy.Spider):
         leftOverLinks = []
 
         for link in links:
-            if urlIsDutch(link.url, trust):
+            if self.urlIsDutch(link.url, trust):
                 yield scrapy.Request(link.url, priority=trust, callback=lambda x: self.parseLink(x, trust + 1))
             else:
                 leftOverLinks.append(link)

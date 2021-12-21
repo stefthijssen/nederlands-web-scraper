@@ -37,7 +37,7 @@ class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
     start_urls = START_URLS
     link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterUrl)
-
+    
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
         'DNS_TIMEOUT': 10

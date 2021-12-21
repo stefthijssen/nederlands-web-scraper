@@ -14,11 +14,6 @@ PERIOD_OF_TIME = 3600
 
 filterNonWords = lambda x: " ".join(re.findall("[a-zA-Z]+", x))
 
-detector = DutchDetector()
-
-def urlIsDutch(url):
-    return detector.isDutch(url)
-
 def sampleIsDutch(sample):
     code = detect(sample)
     return 'nl' == code
@@ -42,8 +37,9 @@ start_time = time.time()
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
     start_urls = START_URLS
-    link_extractor = LinkExtractor(restrict_css = "body", unique = True)
-
+    link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterUrl)
+    detector = DutchDetector()
+    
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
         'DNS_TIMEOUT': 10
@@ -90,8 +86,8 @@ class DataSpider(scrapy.Spider):
         leftOverLinks = []
 
         for link in links:
-            if urlIsDutch(link.url):
-                sample = self.getClassificationSentences()[0]
+            if self.detector.isDutch(link.url):
+                sample = self.getClassificationSentences(response)[0]
                 if sampleIsDutch(sample):
                     yield scrapy.Request(link.url, priority=trust, callback=lambda x: self.parseLink(x, trust + 1))
             else:

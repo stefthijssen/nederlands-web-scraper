@@ -8,11 +8,6 @@ START_URLS = [ "https://www.nu.nl", "https://nl.wikipedia.org" ]
 SPIDER_NAME = "dataSpider"
 PERIOD_OF_TIME = 3600
 
-detector = DutchDetector()
-
-def urlIsDutch(url):
-    return detector.isDutch(url)
-
 def filterTrailingBackslash(url):
     if (url.endswith('/')):
         return url[:-1]
@@ -32,7 +27,8 @@ start_time = time.time()
 class DataSpider(scrapy.Spider):
     name = SPIDER_NAME
     start_urls = START_URLS
-    link_extractor = LinkExtractor(restrict_css = "body", unique = True)
+    link_extractor = LinkExtractor(restrict_css = "body", unique = True, process_value=filterUrl)
+    detector = DutchDetector()
 
     custom_settings = {
         'LOG_LEVEL': 'ERROR',
@@ -49,7 +45,7 @@ class DataSpider(scrapy.Spider):
         leftOverLinks = []
 
         for link in links:
-            if urlIsDutch(link.url):
+            if self.detector.isDutch(link.url):
                 yield scrapy.Request(link.url, priority=trust, callback=lambda x: self.parseLink(x, trust + 1))
             else:
                 leftOverLinks.append(link)

@@ -5,10 +5,10 @@ import pickle
 
 class DutchDetector:
     def __init__(self) -> None:
-        self.model = tf.keras.models.load_model('nn_trigram')
-        self.train_min = pd.read_pickle('recources/trainmin.pkl')
-        self.train_max = pd.read_pickle('recources/trainmax.pkl')
-        file = open("recources/vocabulary.pkl", 'rb')
+        self.model = tf.keras.models.load_model('scrapers/model/nn_trigram')
+        self.train_min = pd.read_pickle('scrapers/model/recources/trainmin.pkl')
+        self.train_max = pd.read_pickle('scrapers/model/recources/trainmax.pkl')
+        file = open("scrapers/model/recources/vocabulary.pkl", 'rb')
         vocab = pickle.load(file)
         file.close()
         self.vectorizer = CountVectorizer(analyzer='char',
