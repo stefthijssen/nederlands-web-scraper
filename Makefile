@@ -9,3 +9,6 @@ runC:
 
 runD:
 	scrapy runspider scrapers/dutchScraperD.py -o testD.json
+
+runE:
+	scrapy runspider scrapers/dutchScraperE.py -o testE.json
